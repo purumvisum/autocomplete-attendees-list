@@ -1,2 +1,3 @@
 # autocomplete-attendees-list
-autocomplete input field 
+Autocomplete input field example 
+Based on Create app typescipt template and Mobx

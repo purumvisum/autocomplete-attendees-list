@@ -28,3 +28,6 @@ test('renders learn react link', () => {
 
 // Управлять кнопками вниз
 
+
+// Issues:
+// If I removed Name manualy

@@ -1,21 +1,9 @@
-import React, { useState } from "react";
-// import { useStores } from "./use-stores";
+import React from "react";
 import { IContact } from "../stores/store";
-
-import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-
-import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
-
 import Avatar from '@mui/material/Avatar';
-import Box from '@mui/material/Box';
-
-
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-// import { CheckCircleOutlineIcon } from "@mui/icons-material";
-
 
 import '../App.css';
 import Status from "./status";

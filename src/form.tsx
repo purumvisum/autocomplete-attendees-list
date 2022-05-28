@@ -2,24 +2,8 @@ import React, { useState } from "react";
 import { useStores } from "./use-stores";
 import { IContact } from "./stores/store";
 
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import Paper from '@mui/material/Paper';
-
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-
-import Avatar from '@mui/material/Avatar';
-import Box from '@mui/material/Box';
-
-
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-// import { CheckCircleOutlineIcon } from "@mui/icons-material";
-
-
-import './App.css';
-import ListItemWithStatus from "./list-of-attendees/list-item";
+import AttendeesList from "./list-of-attendees/attendee-list";
+import TitleForm from "./form/title-form";
 
 const EventForm = () => {
     const { attendeesStore } = useStores();
@@ -50,8 +34,26 @@ const EventForm = () => {
 
     const keyUp = (event:any) => {
 
-        console.log("event.target.value",event.target.innerHTML)
-        console.log("event.keyCode",event.keyCode)
+        // console.log("event.target.value",event.target.innerHTML)
+        // console.log("event.keyCode",event.keyCode)
+        // console.log('StartOfTheContact', startOfTheContact)
+
+        const caretIndex = getCaretIndex(document.querySelector('[contenteditable]'))
+
+        // If errows were pressed
+        if( event.keyCode <= 40 && event.keyCode >= 37 ) {
+            return;
+        }
+
+        // if @ was pressed
+        if (event.shiftKey) {
+            if(event.keyCode === 50) {
+                console.log("@@@")
+                // set the start of this contact to the state
+                // @ts-ignore
+                setStartOfTheContact(getCaretIndex(document.querySelector('[contenteditable]')) - 1);
+            }
+        }
 
         // field is with a text
         if (event.target.innerHTML) {
@@ -68,16 +70,27 @@ const EventForm = () => {
                 // @ts-ignore
                 parentSpan.innerText = `@${parentSpan.innerText}`
                 // @ts-ignore
+                parentSpan.outerHTML = parentSpan.innerHTML
+
+                // @ts-ignore
                 // set @ to as a start Set start of a contact
-                const caretIndex = getCaretIndex(document.querySelector('[contenteditable]'))
+                // const caretIndex = getCaretIndex(document.querySelector('[contenteditable]'))
                 // @ts-ignore
                 const lastSpaceIndex = document.querySelector('[contenteditable]')?.textContent.lastIndexOf("@", caretIndex)
+                // console.log("StartOfTheContact",lastSpaceIndex)
+                // console.log("caretIndex",caretIndex)
                 // @ts-ignore
                 setStartOfTheContact(lastSpaceIndex);
 
+                // var range = document.createRange();
+                // // var myDiv = document.getElementById("editable");
+                // // @ts-ignore
+                // range.setStart(document.querySelector('[contenteditable]'), caretIndex);
+                // // @ts-ignore
+                // range.setEnd(document.querySelector('[contenteditable]'), caretIndex);
+
                 // console.log("parentSpan",lastSpaceIndex)
-                // @ts-ignore
-                parentSpan.outerHTML = parentSpan.innerHTML
+
                 // @ts-ignore
                 // console.log('contactID',contactID, listOfAttendees.toJS)
                 const filterList = listOfAttendees.filter(attendee => {
@@ -92,17 +105,6 @@ const EventForm = () => {
             }
         }
 
-
-        // if @ was pressed
-        if (event.shiftKey) {
-            if(event.keyCode === 50) {
-                console.log("@@@")
-                // set the start of this contact to the state
-                // @ts-ignore
-                setStartOfTheContact(getCaretIndex(document.querySelector('[contenteditable]')) - 1);
-
-            }
-        }
 
         const wordWithAnchor = currentWordWithAnchor();
         // if you type anything with @ it will show filtered contact list
@@ -159,74 +161,18 @@ const EventForm = () => {
     color: rgba(var(--sk_highlight,18,100,163),1);border-radius: 3px;
     padding: 2px 5px 2px;"  data-contact=${contact.id} }>${contact.name}</span><span>&nbsp;</span>`);
 
-
     }
 
     return (
         <div>
+           <TitleForm
+                keyUp = {keyUp}
+                chooseAttendee = {chooseAttendee}
+                attendeesStore = {attendeesStore}
+                filteredContactsList = {filteredContactsList}
+           />
 
-            <Box
-                component="form"
-                sx={{
-                    '& > :not(style)': { m: 1, width: '25ch' },
-                }}
-                noValidate
-                autoComplete="off"
-            >
-
-                <span
-                    className="text-field"
-                    suppressContentEditableWarning={true}
-                    onKeyUp={keyUp}
-                    placeholder = "Event name"
-                    // onClick={onKeyPress}
-                    contentEditable="true">
-                </span>
-
-                {filteredContactsList.length > 0 &&
-                    <Paper elevation={3}
-                           className="suggestion-list"
-                    >
-                        <List sx={{width: '100%', maxWidth: 360, bgcolor: 'background.paper'}}>
-                            {
-                                filteredContactsList.map((contact: IContact) => {
-                                    return (
-                                        <ListItem
-                                            id={contact.id}
-                                            disablePadding>
-                                            <ListItemButton
-                                                onClick={() => {
-                                                    chooseAttendee(contact);
-                                                }}
-                                            >
-                                                <ListItemAvatar>
-                                                    <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg"/>
-                                                </ListItemAvatar>
-                                                <ListItemText primary={contact.fullName} secondary={contact.email}/>
-                                            </ListItemButton>
-                                        </ListItem>
-                                    )
-                                })
-                            }
-                        </List>
-                    </Paper>
-                }
-
-                {attendeesStore.meetingTitle}
-            </Box>
-
-            <div className="attendees-box">
-                <div className="text-attendees">Attendees</div>
-                <List disablePadding sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                    {
-                        listOfAttendees.map((contact:IContact) => {
-                            return (
-                                <ListItemWithStatus contact ={contact}/>
-                            )
-                        })
-                    }
-                </List>
-            </div>
+           <AttendeesList listOfAttendees={listOfAttendees}/>
 
         </div>
 

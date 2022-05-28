@@ -4,6 +4,7 @@ import { IContact } from "./stores/store";
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
+import Paper from '@mui/material/Paper';
 
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
@@ -12,12 +13,18 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 
+
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+// import { CheckCircleOutlineIcon } from "@mui/icons-material";
+
+
 import './App.css';
+import ListItemWithStatus from "./list-of-attendees/list-item";
 
 const EventForm = () => {
     const { attendeesStore } = useStores();
     const [filteredContactsList, setFilteredContactsList] = useState<any[]>([]);
-    
+
     const [listOfAttendees, setListOfAttendees] = useState<IContact[]>([]);
 
     const [startOfTheContact, setStartOfTheContact] = useState(null);
@@ -135,14 +142,22 @@ const EventForm = () => {
     const chooseAttendee = (contact: IContact) => {
         // remove all contact list from the screen
         setFilteredContactsList([])
-        // add contact to the list of Attendees
-        setListOfAttendees([...listOfAttendees, contact])
+
+        const contactIsInList = listOfAttendees.find(attendee => {
+            return attendee.id === contact.id
+        })
+        if (!contactIsInList) {
+            // add contact to the list of Attendees
+            setListOfAttendees([...listOfAttendees, contact])
+        }
         const textToReplace = currentWordWithAnchor();
 
         // Inner text that started woth @ and ended at the cursor position replsed with contact name
         // @ts-ignore
         document.querySelector('[contenteditable]').innerHTML = document.querySelector('[contenteditable]').innerHTML.replace(textToReplace,
-            `<span style="color:#FF0000"  data-contact=${contact.id} }>${contact.name}</span><span>&nbsp;</span>`);
+            `<span style="background: rgba(var(--sk_highlight_accent,29,155,209),.1);
+    color: rgba(var(--sk_highlight,18,100,163),1);border-radius: 3px;
+    padding: 2px 5px 2px;"  data-contact=${contact.id} }>${contact.name}</span><span>&nbsp;</span>`);
 
 
     }
@@ -163,56 +178,56 @@ const EventForm = () => {
                     className="text-field"
                     suppressContentEditableWarning={true}
                     onKeyUp={keyUp}
+                    placeholder = "Event name"
                     // onClick={onKeyPress}
-                    contentEditable="true">This is a paragraph.<span style={{color: "red"}}> It is editable. </span> Try to
-                    change this text.
+                    contentEditable="true">
                 </span>
 
-                <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                    {
-                        filteredContactsList.map((contact:IContact) => {
-                            return (
-                                <ListItem
-                                    id = {contact.id}
-                                    disablePadding>
-                                    <ListItemButton
-                                        onClick={() => {
-                                            chooseAttendee(contact);
-                                        }}
-                                    >
-                                    <ListItemAvatar>
-                                        <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                                    </ListItemAvatar>
-                                    <ListItemText primary={contact.fullName} secondary={contact.email} />
-                                </ListItemButton>
-                                </ListItem>
-                            )
-                        })
-                    }
-                </List>
+                {filteredContactsList.length > 0 &&
+                    <Paper elevation={3}
+                           className="suggestion-list"
+                    >
+                        <List sx={{width: '100%', maxWidth: 360, bgcolor: 'background.paper'}}>
+                            {
+                                filteredContactsList.map((contact: IContact) => {
+                                    return (
+                                        <ListItem
+                                            id={contact.id}
+                                            disablePadding>
+                                            <ListItemButton
+                                                onClick={() => {
+                                                    chooseAttendee(contact);
+                                                }}
+                                            >
+                                                <ListItemAvatar>
+                                                    <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg"/>
+                                                </ListItemAvatar>
+                                                <ListItemText primary={contact.fullName} secondary={contact.email}/>
+                                            </ListItemButton>
+                                        </ListItem>
+                                    )
+                                })
+                            }
+                        </List>
+                    </Paper>
+                }
 
                 {attendeesStore.meetingTitle}
             </Box>
 
-            <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                {
-                    listOfAttendees.map((contact:IContact) => {
-                        return (
-                            <ListItem
-                                id = {contact.id}
-                                disablePadding>
-                                <ListItemButton
-                                >
-                                    <ListItemAvatar>
-                                        <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                                    </ListItemAvatar>
-                                    <ListItemText primary={contact.fullName} secondary={contact.email} />
-                                </ListItemButton>
-                            </ListItem>
-                        )
-                    })
-                }
-            </List>
+            <div className="attendees-box">
+                <div className="text-attendees">Attendees</div>
+                <List disablePadding sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                    {
+                        listOfAttendees.map((contact:IContact) => {
+                            return (
+                                <ListItemWithStatus contact ={contact}/>
+                            )
+                        })
+                    }
+                </List>
+            </div>
+
         </div>
 
     );

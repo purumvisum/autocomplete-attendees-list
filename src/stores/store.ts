@@ -8,7 +8,7 @@ export interface IContact  {
     name: string;
     email: string;
     // photo: string;
-    // status: string;
+    status: string;
 }
 
 function uuidv4() {
@@ -26,11 +26,11 @@ export class AttendeesStore {
     }
 
     public contacts : IContact[] = [
-        { id: uuidv4(), name:"Daria", fullName: "Daria Ivanovich", email: 'purumvisum@gmail.com' },
-        { id: uuidv4(), name:"Daaria", fullName: "Daaria Ivanovich", email: 'purumvisum@gmail.com' },
-        { id: uuidv4(), name:"Rick", fullName: "Rick Pastoor", email: 'rick@risecalendar.com' },
-        { id: uuidv4(), name:"Emiel", fullName: "Emiel Janson", email: 'emiel@risecalendar.com' },
-        { id: uuidv4(), name:"Willem", fullName: "Willem Spruijt", email: 'willem@risecalendar.com' },
+        { id: uuidv4(), name:"Daria", fullName: "Daria Ivanovich", email: 'purumvisum@gmail.com', status: "Available" },
+        { id: uuidv4(), name:"Daaria", fullName: "Daaria Ivanovich", email: 'purumvisum@gmail.com', status: "Unavailiable" },
+        { id: uuidv4(), name:"Rick", fullName: "Rick Pastoor", email: 'rick@risecalendar.com', status: "Unavailiable" },
+        { id: uuidv4(), name:"Emiel", fullName: "Emiel Janson", email: 'emiel@risecalendar.com', status: "Available" },
+        { id: uuidv4(), name:"Willem", fullName: "Willem Spruijt", email: 'willem@risecalendar.com', status: "Available" },
     ];
 
     public meetingTitle: any[] = []

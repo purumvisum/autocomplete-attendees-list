@@ -1,12 +1,65 @@
-.App {
-  text-align: center;
-}
+/*.App {*/
+/*  text-align: center;*/
+/*}*/
 
 .text-field {
   display: block;
   width: 40%;
-  border: 1px solid #c4c4c4;
-  border-radius: 4px;
+  /*border: 1px solid #c4c4c4;*/
+  /*border-radius: 4px;*/
   padding: 10px;
   text-align: left;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 22px;
 }
+
+.text-field:focus-visible {
+  outline: none;
+}
+
+.attendees-box {
+  display: flex;
+}
+
+.text-attendees {
+  color: #8b8e99;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 0 20px;
+}
+
+.list-item-status {
+  display: flex;
+  align-items: center;
+}
+
+.no-avail {
+  color: #8b8e99;
+}
+
+.list-item-status-icon{
+  width: 16px;
+  margin-right: 3px;
+}
+
+.list-item-status-text {
+  color: #8b8e99;
+}
+
+.fa-plus-circle {
+  color: #25c139
+}
+
+[contentEditable=true]:empty:before {
+  content: attr(placeholder);
+  opacity: 0.6;
+  color: #bdbfc5;
+}
+
+.suggestion-list {
+  position:absolute;
+  z-index: 99;
+  border-radius: 10px;
+}
+

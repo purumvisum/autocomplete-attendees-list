@@ -21,7 +21,6 @@ const Status = (props: {
                     <span  className="list-item-status-text">{status}</span>
                 </span>
             )
-            break;
         case ("Unavailiable"):
             return (
                 <span className="list-item-status no-avail" >
@@ -30,7 +29,6 @@ const Status = (props: {
                     />
                     {status}</span>
             )
-            break;
         default:
             return (
                 <span className="list-item-status" >
@@ -38,7 +36,6 @@ const Status = (props: {
                     <span  className="list-item-status-text">{status.toUpperCase()}</span>
                 </span>
             )
-            break;
     }
 };
 

@@ -4,7 +4,7 @@ import { IContact } from "./stores/store";
 
 import AttendeesList from "./list-of-attendees/attendee-list";
 import TitleForm from "./form/title-form";
-import { getCursorPosition, restoreCaretPosition, setCursorPosition} from "./helpers";
+import { getCursorPosition, restoreCaretPosition} from "./helpers";
 
 const EventForm = () => {
     const { attendeesStore } = useStores();

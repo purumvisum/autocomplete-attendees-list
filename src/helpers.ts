@@ -4,7 +4,7 @@ export function getCursorPosition(parent:any, node:any, offset:any, stat:any) {
     if (stat.done) return stat;
 
     var currentNode = null;
-    if (parent.childNodes.length == 0) {
+    if (parent.childNodes.length === 0) {
         stat.pos += parent.textContent.length;
     } else {
         for (var i = 0; i < parent.childNodes.length && !stat.done; i++) {
@@ -24,7 +24,7 @@ export function getCursorPosition(parent:any, node:any, offset:any, stat:any) {
 export function setCursorPosition(parent:any, range:any, stat:any) {
     if (stat.done) return range;
     let currentNode = null;
-    if (parent.childNodes.length == 0) {
+    if (parent.childNodes.length === 0) {
         if (parent.textContent.length >= stat.pos) {
             range.setStart(parent, stat.pos);
             stat.done = true;

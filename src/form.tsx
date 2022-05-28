@@ -4,43 +4,46 @@ import { IContact } from "./stores/store";
 
 import AttendeesList from "./list-of-attendees/attendee-list";
 import TitleForm from "./form/title-form";
+import { getCursorPosition, restoreCaretPosition, setCursorPosition} from "./helpers";
 
 const EventForm = () => {
     const { attendeesStore } = useStores();
+    // list is shown in the dropdown to choose from
     const [filteredContactsList, setFilteredContactsList] = useState<any[]>([]);
-
+    //  list of attendees
     const [listOfAttendees, setListOfAttendees] = useState<IContact[]>([]);
+    // position of the char @ of current contact
+    const [startOfTheContact, setStartOfTheContact] = useState<number|undefined>(undefined);
 
-    const [startOfTheContact, setStartOfTheContact] = useState(null);
+    const editableContent =  document.querySelector('[contenteditable]');
+    let sel = window.getSelection();
 
-
-    const currentWordWithAnchor = () => {
-
-        // @ts-ignore
-        const selection = window.getSelection();
-        // @ts-ignore
-        console.log('anchorSymbol', selection, selection.extentNode)
-        // @ts-ignore
-        // let anchorSymbol = document.querySelector('[contenteditable]')?.textContent.indexOf("@");
-        let anchorSymbol = startOfTheContact;
-        // console.log('anchorSymbol',anchorSymbol)
-
-        const caretIndex = getCaretIndex(document.querySelector('[contenteditable]'))
-        // @ts-ignore
-        return document.querySelector('[contenteditable]')?.textContent.slice(anchorSymbol,caretIndex);
+    const getCursor = () => {
+        // Get cursor position
+        let node = sel?.focusNode;
+        let offset = sel?.focusOffset;
+        return getCursorPosition(document.querySelector('[contenteditable]'), node, offset, {pos: 0, done: false});
     }
 
-
+    // Give back a word part that start from @ and end where is a cursor
+    // @Dar|ia ==> @Dar This part will be replaced with Contact span
+    const currentWordWithAnchor = () => {
+        // Get cursor position
+        let pos = getCursor();
+        return editableContent?.textContent?.slice(startOfTheContact, pos.pos);
+    }
 
     const keyUp = (event:any) => {
+        // Get cursor position
+        let pos = getCursor();
 
-        // console.log("event.target.value",event.target.innerHTML)
-        // console.log("event.keyCode",event.keyCode)
-        // console.log('StartOfTheContact', startOfTheContact)
+        // if parent element has data-contact attribute then it's a contact node
+        // @ts-ignore
+        const parentSpan = sel.extentNode.parentElement;
+        // @ts-ignore
+        const contactID = sel.extentNode.parentElement.getAttribute("data-contact");
 
-        const caretIndex = getCaretIndex(document.querySelector('[contenteditable]'))
-
-        // If errows were pressed
+        // If arrows were pressed do nothing
         if( event.keyCode <= 40 && event.keyCode >= 37 ) {
             return;
         }
@@ -48,96 +51,44 @@ const EventForm = () => {
         // if @ was pressed
         if (event.shiftKey) {
             if(event.keyCode === 50) {
-                console.log("@@@")
-                // set the start of this contact to the state
-                // @ts-ignore
-                setStartOfTheContact(getCaretIndex(document.querySelector('[contenteditable]')) - 1);
+                // set the first letter position of this contact to the state
+                setStartOfTheContact(Number(pos.pos) - Number(1));
             }
         }
 
-        // field is with a text
-        if (event.target.innerHTML) {
-
-            const selection = window.getSelection();
-            // @ts-ignore
-            const parentSpan = selection.extentNode.parentElement;
-            // @ts-ignore
-            const contactID = selection.extentNode.parentElement.getAttribute("data-contact");
-
+        // if field is with a text
+        if (event.target.innerHTML && editableContent) {
             if (contactID) {
-                // @ts-ignore
-                console.log("It's contact",  parentSpan.innerText)
-                // @ts-ignore
+                //Replace contact span with a "@contact" string
                 parentSpan.innerText = `@${parentSpan.innerText}`
-                // @ts-ignore
                 parentSpan.outerHTML = parentSpan.innerHTML
 
-                // @ts-ignore
+                // restore the cursor position after changing HTML
+                restoreCaretPosition(sel,editableContent, pos);
+
                 // set @ to as a start Set start of a contact
-                // const caretIndex = getCaretIndex(document.querySelector('[contenteditable]'))
                 // @ts-ignore
-                const lastSpaceIndex = document.querySelector('[contenteditable]')?.textContent.lastIndexOf("@", caretIndex)
-                // console.log("StartOfTheContact",lastSpaceIndex)
-                // console.log("caretIndex",caretIndex)
-                // @ts-ignore
-                setStartOfTheContact(lastSpaceIndex);
+                const lastContactIndex = editableContent?.textContent.lastIndexOf("@", pos.pos)
+                setStartOfTheContact(lastContactIndex);
 
-                // var range = document.createRange();
-                // // var myDiv = document.getElementById("editable");
-                // // @ts-ignore
-                // range.setStart(document.querySelector('[contenteditable]'), caretIndex);
-                // // @ts-ignore
-                // range.setEnd(document.querySelector('[contenteditable]'), caretIndex);
-
-                // console.log("parentSpan",lastSpaceIndex)
-
-                // @ts-ignore
-                // console.log('contactID',contactID, listOfAttendees.toJS)
+                // Delete edited attendees from the list
                 const filterList = listOfAttendees.filter(attendee => {
                     return attendee.id !== contactID;
                 })
-
-                console.log('contactID',filterList)
                 setListOfAttendees(filterList)
-
-                // selection!.extentNode.parentElement.innerText = `@${selection!.extentNode.parentElement.innerText}`
 
             }
         }
 
-
         const wordWithAnchor = currentWordWithAnchor();
         // if you type anything with @ it will show filtered contact list
-        // @ts-ignore
         if(wordWithAnchor) {
             setFilteredContactsList(attendeesStore.getAllContacts.filter((contact: IContact) => {
-                // @ts-ignore
                 return contact.name.includes(wordWithAnchor.replace('@', ''))
             }))
         } else {
             setFilteredContactsList([])
         }
-
-    }
-
-
-
-    // https://javascript.plainenglish.io/how-to-find-the-caret-inside-a-contenteditable-element-955a5ad9bf81
-    function getCaretIndex(element:any) {
-        let position = 0;
-        const isSupported = typeof window.getSelection !== "undefined";
-        if (isSupported) {
-            const selection = window.getSelection();
-            if (selection && selection.rangeCount !== 0) {
-                // @ts-ignore
-                const range =  window && window.getSelection().getRangeAt(0);
-                const preCaretRange = range.cloneRange();
-                preCaretRange.selectNodeContents(element);
-                preCaretRange.setEnd(range.endContainer, range.endOffset);
-                position = preCaretRange.toString().length;
-            }
-        }
-        return position;
     }
 
 
@@ -145,6 +96,7 @@ const EventForm = () => {
         // remove all contact list from the screen
         setFilteredContactsList([])
 
+        // Don't add contact id it's already in the list
         const contactIsInList = listOfAttendees.find(attendee => {
             return attendee.id === contact.id
         })
@@ -152,14 +104,16 @@ const EventForm = () => {
             // add contact to the list of Attendees
             setListOfAttendees([...listOfAttendees, contact])
         }
+
         const textToReplace = currentWordWithAnchor();
 
-        // Inner text that started woth @ and ended at the cursor position replsed with contact name
-        // @ts-ignore
-        document.querySelector('[contenteditable]').innerHTML = document.querySelector('[contenteditable]').innerHTML.replace(textToReplace,
-            `<span style="background: rgba(var(--sk_highlight_accent,29,155,209),.1);
+        if (editableContent && textToReplace) {
+            // Inner text that started with @ and ended at the cursor position replased with contact name
+            editableContent.innerHTML =editableContent.innerHTML.replace(textToReplace,
+                `<span style="background: rgba(var(--sk_highlight_accent,29,155,209),.1);
     color: rgba(var(--sk_highlight,18,100,163),1);border-radius: 3px;
     padding: 2px 5px 2px;"  data-contact=${contact.id} }>${contact.name}</span><span>&nbsp;</span>`);
+        }
 
     }
 
@@ -171,9 +125,7 @@ const EventForm = () => {
                 attendeesStore = {attendeesStore}
                 filteredContactsList = {filteredContactsList}
            />
-
            <AttendeesList listOfAttendees={listOfAttendees}/>
-
         </div>
 
     );

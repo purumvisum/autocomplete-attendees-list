@@ -1,38 +1,65 @@
-.App {
-  text-align: center;
+/*.App {*/
+/*  text-align: center;*/
+/*}*/
+
+.text-field {
+  display: block;
+  width: 40%;
+  /*border: 1px solid #c4c4c4;*/
+  /*border-radius: 4px;*/
+  padding: 10px;
+  text-align: left;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 22px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.text-field:focus-visible {
+  outline: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.attendees-box {
   display: flex;
-  flex-direction: column;
+}
+
+.text-attendees {
+  color: #8b8e99;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 0 20px;
+}
+
+.list-item-status {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.no-avail {
+  color: #8b8e99;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.list-item-status-icon{
+  width: 16px;
+  margin-right: 3px;
 }
+
+.list-item-status-text {
+  color: #8b8e99;
+}
+
+.fa-plus-circle {
+  color: #25c139
+}
+
+[contentEditable=true]:empty:before {
+  content: attr(placeholder);
+  opacity: 0.6;
+  color: #bdbfc5;
+}
+
+.suggestion-list {
+  position:absolute;
+  z-index: 99;
+  border-radius: 10px;
+}
+

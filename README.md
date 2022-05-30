@@ -12,7 +12,7 @@ Based on:
 - A user can edit contact in the title. (Functionalyty similar to the Slack input field)
 
 ## To run locally:
-Download main branch
+Download the main branch
 ```
 npm install
 npm start

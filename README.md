@@ -14,6 +14,7 @@ Based on:
 ## To run locally:
 Download the main branch
 ```
+git clone https://github.com/purumvisum/autocomplete-attendees-list.git
 npm install
 npm start
 ```
